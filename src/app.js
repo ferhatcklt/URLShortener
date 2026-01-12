@@ -1,4 +1,5 @@
 require('dotenv').config();
+const rateLimit = require('express-rate-limit');
 const express = require('express');
 const urlRoutes = require('./routes/urlRoutes');
 
@@ -7,6 +8,13 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json()); // JSON verisini okumak için
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 dakika
+    max: 100, // IP başına maksimum 100 istek
+    message: { error: 'Too many requests, please try again later.' }
+});
+app.use(limiter);
 
 // Routes
 // Kısaltma işlemleri için '/api' prefixi kullanıyoruz
